@@ -135,7 +135,7 @@ jobs:
           key: ${{ secrets.SSH_KEY }}
           port: ${{ secrets.SSH_PORT || '22' }}
           source: "docker-compose.yml"
-          target: ${{ secrets.DEPLOY_DIR || '/home/ubuntu/homelabos' }}
+          target: ${{ secrets.DEPLOY_DIR || 'homelabos' }}
 
       - name: Execute deployment commands via SSH
         uses: appleboy/ssh-action@master
@@ -146,7 +146,7 @@ jobs:
           port: ${{ secrets.SSH_PORT || '22' }}
           script: |
             # Determine deploy path
-            DEPLOY_PATH="${{ secrets.DEPLOY_DIR || '/home/ubuntu/homelabos' }}"
+            DEPLOY_PATH="${{ secrets.DEPLOY_DIR || 'homelabos' }}"
             mkdir -p $DEPLOY_PATH
             cd $DEPLOY_PATH
 
