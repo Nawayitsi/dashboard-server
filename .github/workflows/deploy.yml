@@ -47,6 +47,9 @@ jobs:
           npm install
 
       - name: Build frontend
+        env:
+          VITE_API_URL: /api
+          VITE_SOCKET_URL: /
         run: |
           cd frontend
           npm run build > ../frontend-build.log 2>&1 || (echo "### Frontend Build Failure" >> $GITHUB_STEP_SUMMARY && echo '```' >> $GITHUB_STEP_SUMMARY && cat ../frontend-build.log >> $GITHUB_STEP_SUMMARY && echo '```' >> $GITHUB_STEP_SUMMARY && exit 1)
@@ -107,8 +110,8 @@ jobs:
         run: |
           git config --global user.name "github-actions[bot]"
           git config --global user.email "github-actions[bot]@users.noreply.github.com"
-          git add backend-build.log || true
-          git add frontend-build.log || true
+          git add -f backend-build.log || true
+          git add -f frontend-build.log || true
           git commit -m "chore: upload build logs [skip ci]" || exit 0
           git push origin main
 
