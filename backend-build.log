@@ -1,0 +1,52 @@
+
+> homelabos-backend@1.0.0 build
+> tsc
+
+src/app.ts(16,24): error TS2307: Cannot find module './modules/logs/logs.routes' or its corresponding type declarations.
+src/jobs/metrics.job.ts(56,23): error TS2339: Property 'cpu' does not exist on type 'MetricData[]'.
+src/jobs/metrics.job.ts(56,62): error TS2339: Property 'cpu' does not exist on type 'MetricData[]'.
+src/jobs/metrics.job.ts(57,23): error TS2339: Property 'ram' does not exist on type 'MetricData[]'.
+src/jobs/metrics.job.ts(57,62): error TS2339: Property 'ram' does not exist on type 'MetricData[]'.
+src/jobs/metrics.job.ts(58,23): error TS2339: Property 'network_rx' does not exist on type 'MetricData[]'.
+src/jobs/metrics.job.ts(58,68): error TS2339: Property 'network_rx' does not exist on type 'MetricData[]'.
+src/jobs/metrics.job.ts(59,23): error TS2339: Property 'network_tx' does not exist on type 'MetricData[]'.
+src/jobs/metrics.job.ts(59,68): error TS2339: Property 'network_tx' does not exist on type 'MetricData[]'.
+src/jobs/metrics.job.ts(64,15): error TS2322: Type '"SYSTEM"' is not assignable to type 'MetricType'.
+src/jobs/metrics.job.ts(65,30): error TS2339: Property 'cpu' does not exist on type 'MetricData[]'.
+src/jobs/metrics.job.ts(67,38): error TS2339: Property 'serviceId' does not exist on type '{ type: IntegrationType; id: string; createdAt: Date; updatedAt: Date; name: string; status: IntegrationStatus; config: JsonValue; isEnabled: boolean; lastSyncAt: Date | null; }'.
+src/jobs/metrics.job.ts(68,15): error TS2322: Type 'MetricData[]' is not assignable to type 'NullableJsonNullValueInput | InputJsonValue | undefined'.
+  Type 'MetricData[]' is not assignable to type 'InputJsonObject'.
+    Index signature for type 'string' is missing in type 'MetricData[]'.
+src/jobs/metrics.job.ts(73,23): error TS2339: Property 'cpu' does not exist on type 'MetricData[]'.
+src/jobs/metrics.job.ts(73,38): error TS2339: Property 'cpu' does not exist on type 'MetricData[]'.
+src/jobs/metrics.job.ts(77,47): error TS2339: Property 'cpu' does not exist on type 'MetricData[]'.
+src/jobs/metrics.job.ts(78,27): error TS2339: Property 'serviceId' does not exist on type '{ type: IntegrationType; id: string; createdAt: Date; updatedAt: Date; name: string; status: IntegrationStatus; config: JsonValue; isEnabled: boolean; lastSyncAt: Date | null; }'.
+src/jobs/metrics.job.ts(100,25): error TS2339: Property 'serviceId' does not exist on type '{ type: IntegrationType; id: string; createdAt: Date; updatedAt: Date; name: string; status: IntegrationStatus; config: JsonValue; isEnabled: boolean; lastSyncAt: Date | null; }'.
+src/middleware/auditLog.ts(14,13): error TS2322: Type 'string | string[] | null' is not assignable to type 'string | null | undefined'.
+  Type 'string[]' is not assignable to type 'string'.
+src/modules/alerts/alerts.controller.ts(24,57): error TS2345: Argument of type 'string | string[]' is not assignable to parameter of type 'string'.
+  Type 'string[]' is not assignable to type 'string'.
+src/modules/alerts/alerts.controller.ts(29,53): error TS2345: Argument of type 'string | string[]' is not assignable to parameter of type 'string'.
+  Type 'string[]' is not assignable to type 'string'.
+src/modules/integrations/integrations.routes.ts(33,16): error TS2322: Type 'string | string[]' is not assignable to type 'string | undefined'.
+  Type 'string[]' is not assignable to type 'string'.
+src/modules/integrations/integrations.routes.ts(43,72): error TS2322: Type 'string | string[]' is not assignable to type 'string | undefined'.
+  Type 'string[]' is not assignable to type 'string'.
+src/modules/integrations/integrations.routes.ts(53,16): error TS2322: Type 'string | string[]' is not assignable to type 'string | undefined'.
+  Type 'string[]' is not assignable to type 'string'.
+src/modules/notifications/notifications.controller.ts(36,41): error TS2345: Argument of type 'string | string[]' is not assignable to parameter of type 'string'.
+  Type 'string[]' is not assignable to type 'string'.
+src/modules/services/services.controller.ts(17,54): error TS2345: Argument of type 'string | string[]' is not assignable to parameter of type 'string'.
+  Type 'string[]' is not assignable to type 'string'.
+src/modules/services/services.controller.ts(31,52): error TS2345: Argument of type 'string | string[]' is not assignable to parameter of type 'string'.
+  Type 'string[]' is not assignable to type 'string'.
+src/modules/services/services.controller.ts(38,36): error TS2345: Argument of type 'string | string[]' is not assignable to parameter of type 'string'.
+  Type 'string[]' is not assignable to type 'string'.
+src/modules/settings/settings.controller.ts(16,49): error TS2345: Argument of type 'string | string[]' is not assignable to parameter of type 'string'.
+  Type 'string[]' is not assignable to type 'string'.
+src/modules/users/users.controller.ts(17,48): error TS2345: Argument of type 'string | string[]' is not assignable to parameter of type 'string'.
+  Type 'string[]' is not assignable to type 'string'.
+src/modules/users/users.controller.ts(31,46): error TS2345: Argument of type 'string | string[]' is not assignable to parameter of type 'string'.
+  Type 'string[]' is not assignable to type 'string'.
+src/modules/users/users.controller.ts(38,33): error TS2345: Argument of type 'string | string[]' is not assignable to parameter of type 'string'.
+  Type 'string[]' is not assignable to type 'string'.
