@@ -1,7 +1,0 @@
-
-> homelabos-backend@1.0.0 build
-> tsc
-
-error TS6059: File '/home/runner/work/dashboard-server/dashboard-server/backend/prisma/seed.ts' is not under 'rootDir' '/home/runner/work/dashboard-server/dashboard-server/backend/src'. 'rootDir' is expected to contain all source files.
-  The file is in the program because:
-    Matched by include pattern 'prisma/seed.ts' in '/home/runner/work/dashboard-server/dashboard-server/backend/tsconfig.json'
