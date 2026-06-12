@@ -3,7 +3,6 @@ import { useNavigate } from 'react-router-dom';
 import { useAuthStore } from '../store/authStore';
 import { authApi } from '../services/auth.api';
 import { Terminal, Lock, Mail, Loader2 } from 'lucide-react';
-import { useToast } from '../hooks/useToast';
 
 export function Login() {
   const [email, setEmail] = useState('');
