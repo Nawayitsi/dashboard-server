@@ -14,7 +14,7 @@ export class UsersController {
 
   async findById(req: Request, res: Response, next: NextFunction) {
     try {
-      const user = await usersService.findById(req.params.id);
+      const user = await usersService.findById(req.params.id as string);
       sendSuccess(res, user);
     } catch (error) { next(error); }
   }
@@ -28,14 +28,14 @@ export class UsersController {
 
   async update(req: Request, res: Response, next: NextFunction) {
     try {
-      const user = await usersService.update(req.params.id, req.body);
+      const user = await usersService.update(req.params.id as string, req.body);
       sendSuccess(res, user, 'User updated');
     } catch (error) { next(error); }
   }
 
   async delete(req: Request, res: Response, next: NextFunction) {
     try {
-      await usersService.delete(req.params.id);
+      await usersService.delete(req.params.id as string);
       sendSuccess(res, null, 'User deleted');
     } catch (error) { next(error); }
   }

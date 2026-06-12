@@ -3,6 +3,16 @@ import { integrationRegistry } from '../integrations/base/integration.registry';
 import { logger } from '../utils/logger';
 import { emitMetricsUpdate, emitNewAlert } from '../socket';
 
+const serviceIdMap: Record<string, string> = {
+  MIKROTIK: 'mikrotik-router',
+  NEXTCLOUD: 'nextcloud',
+  SYNOLOGY: 'synology-nas',
+  LIBRENMS: 'librenms',
+  SAFELINE: 'safeline-waf',
+  SIEM: 'siem',
+  NGINX_PROXY_MANAGER: 'nginx-proxy-manager',
+};
+
 class MetricsScheduler {
   private intervalId: NodeJS.Timeout | null = null;
   private isRunning = false;
@@ -49,33 +59,40 @@ class MetricsScheduler {
           await connector.initialize(integration.config as Record<string, any>);
           
           // Collect
-          const metrics = await connector.collectMetrics();
+          const metricsList = await connector.collectMetrics();
           activeCounts++;
 
+          const cpuVal = metricsList.find(m => m.type === 'CPU')?.value;
+          const memVal = metricsList.find(m => m.type === 'MEMORY')?.value;
+          const rxVal = metricsList.find(m => m.type === 'NETWORK_RX')?.value;
+          const txVal = metricsList.find(m => m.type === 'NETWORK_TX')?.value;
+          
+          const serviceId = serviceIdMap[integration.type];
+
           // Accumulate if numerical
-          if (metrics.cpu !== undefined) totalCpu += metrics.cpu;
-          if (metrics.ram !== undefined) totalRam += metrics.ram;
-          if (metrics.network_rx !== undefined) totalRx += metrics.network_rx;
-          if (metrics.network_tx !== undefined) totalTx += metrics.network_tx;
+          if (cpuVal !== undefined) totalCpu += cpuVal;
+          if (memVal !== undefined) totalRam += memVal;
+          if (rxVal !== undefined) totalRx += rxVal;
+          if (txVal !== undefined) totalTx += txVal;
 
           // Save per-service metrics to DB
           await prisma.metric.create({
             data: {
-              type: 'SYSTEM',
-              value: metrics.cpu || 0,
+              type: 'CPU',
+              value: cpuVal || 0,
               unit: '%',
-              serviceId: integration.serviceId,
-              metadata: metrics,
+              serviceId: serviceId,
+              metadata: metricsList as any,
             },
           });
 
           // Check limits / trigger alerts
-          if (metrics.cpu && metrics.cpu > 90) {
+          if (cpuVal && cpuVal > 90) {
             await this.triggerAlert(
               'CRITICAL',
               `High CPU Alert: ${integration.name}`,
-              `Processor load is at ${metrics.cpu.toFixed(1)}% on connector node.`,
-              integration.serviceId
+              `Processor load is at ${cpuVal.toFixed(1)}% on connector node.`,
+              serviceId
             );
           }
 
@@ -93,11 +110,12 @@ class MetricsScheduler {
             data: { status: 'ERROR' },
           });
 
+          const serviceId = serviceIdMap[integration.type];
           await this.triggerAlert(
             'WARNING',
             `Link Offline: ${integration.name}`,
             `Unable to poll metadata link: ${connError.message}`,
-            integration.serviceId
+            serviceId
           );
         }
       }

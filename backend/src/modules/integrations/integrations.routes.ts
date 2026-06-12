@@ -19,7 +19,7 @@ router.get('/', async (req, res, next) => {
 // Get integration by ID
 router.get('/:id', async (req, res, next) => {
   try {
-    const integration = await prisma.integration.findUnique({ where: { id: req.params.id } });
+    const integration = await prisma.integration.findUnique({ where: { id: req.params.id as string } });
     if (!integration) { sendError(res, 'Integration not found', 404); return; }
     sendSuccess(res, integration);
   } catch (error) { next(error); }
@@ -30,7 +30,7 @@ router.put('/:id', adminOnly, async (req, res, next) => {
   try {
     const { config, isEnabled } = req.body;
     const integration = await prisma.integration.update({
-      where: { id: req.params.id },
+      where: { id: req.params.id as string },
       data: { ...(config && { config }), ...(isEnabled !== undefined && { isEnabled }) },
     });
     sendSuccess(res, integration, 'Integration updated');
@@ -40,7 +40,7 @@ router.put('/:id', adminOnly, async (req, res, next) => {
 // Test integration connection
 router.post('/:id/test', adminOnly, async (req, res, next) => {
   try {
-    const integration = await prisma.integration.findUnique({ where: { id: req.params.id } });
+    const integration = await prisma.integration.findUnique({ where: { id: req.params.id as string } });
     if (!integration) { sendError(res, 'Integration not found', 404); return; }
 
     const connector = integrationRegistry.get(integration.type);
@@ -50,7 +50,7 @@ router.post('/:id/test', adminOnly, async (req, res, next) => {
     const result = await connector.testConnection();
 
     await prisma.integration.update({
-      where: { id: req.params.id },
+      where: { id: req.params.id as string },
       data: { status: result.success ? 'CONNECTED' : 'ERROR', lastSyncAt: new Date() },
     });
 

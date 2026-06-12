@@ -33,7 +33,7 @@ export class NotificationsController {
   async delete(req: Request, res: Response, next: NextFunction) {
     try {
       if (!req.user) return;
-      await notificationsService.delete(req.params.id, req.user.userId);
+      await notificationsService.delete(req.params.id as string, req.user.userId);
       sendSuccess(res, null, 'Notification deleted');
     } catch (error) { next(error); }
   }

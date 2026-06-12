@@ -11,7 +11,7 @@ export const auditLog = (action: string, resource: string) => {
             userId: req.user.userId,
             action,
             resource,
-            resourceId: req.params.id || null,
+            resourceId: typeof req.params.id === 'string' ? req.params.id : null,
             details: {
               method: req.method,
               path: req.path,

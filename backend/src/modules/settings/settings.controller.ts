@@ -13,7 +13,7 @@ export class SettingsController {
 
   async get(req: Request, res: Response, next: NextFunction) {
     try {
-      const setting = await settingsService.get(req.params.key);
+      const setting = await settingsService.get(req.params.key as string);
       sendSuccess(res, setting);
     } catch (error) { next(error); }
   }

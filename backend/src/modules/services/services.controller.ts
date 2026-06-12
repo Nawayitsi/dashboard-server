@@ -14,7 +14,7 @@ export class ServicesController {
 
   async findById(req: Request, res: Response, next: NextFunction) {
     try {
-      const service = await servicesService.findById(req.params.id);
+      const service = await servicesService.findById(req.params.id as string);
       sendSuccess(res, service);
     } catch (error) { next(error); }
   }
@@ -28,14 +28,14 @@ export class ServicesController {
 
   async update(req: Request, res: Response, next: NextFunction) {
     try {
-      const service = await servicesService.update(req.params.id, req.body);
+      const service = await servicesService.update(req.params.id as string, req.body);
       sendSuccess(res, service, 'Service updated');
     } catch (error) { next(error); }
   }
 
   async delete(req: Request, res: Response, next: NextFunction) {
     try {
-      await servicesService.delete(req.params.id);
+      await servicesService.delete(req.params.id as string);
       sendSuccess(res, null, 'Service deleted');
     } catch (error) { next(error); }
   }

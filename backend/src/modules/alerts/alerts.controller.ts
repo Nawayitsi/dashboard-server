@@ -21,12 +21,12 @@ export class AlertsController {
   }
 
   async acknowledge(req: Request, res: Response, next: NextFunction) {
-    try { const alert = await alertsService.acknowledge(req.params.id); sendSuccess(res, alert, 'Alert acknowledged'); }
+    try { const alert = await alertsService.acknowledge(req.params.id as string); sendSuccess(res, alert, 'Alert acknowledged'); }
     catch (error) { next(error); }
   }
 
   async resolve(req: Request, res: Response, next: NextFunction) {
-    try { const alert = await alertsService.resolve(req.params.id); sendSuccess(res, alert, 'Alert resolved'); }
+    try { const alert = await alertsService.resolve(req.params.id as string); sendSuccess(res, alert, 'Alert resolved'); }
     catch (error) { next(error); }
   }
 
