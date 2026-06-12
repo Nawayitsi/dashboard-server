@@ -6,18 +6,15 @@ WORKDIR /app
 # Copy package configurations
 COPY package*.json ./
 
-# Install dependencies
-RUN npm install
+# Install production dependencies
+RUN npm install --omit=dev
 
-# Copy Prisma schema and generate client
+# Copy Prisma schema and generate client for target platform
 COPY prisma ./prisma/
 RUN npx prisma generate
 
-# Copy application source code
-COPY . .
-
-# Compile TypeScript to JavaScript
-RUN npm run build
+# Copy compiled JavaScript from runner
+COPY dist ./dist/
 
 # Expose server port
 EXPOSE 4000
