@@ -1,0 +1,96 @@
+version: '3.8'
+
+services:
+  # ─── Frontend ─────────────────────────────────────────────
+  frontend:
+    image: ${FRONTEND_IMAGE:-ghcr.io/ekazakhiistiyawan/homelabos-frontend:latest}
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    container_name: homelabos-frontend
+    ports:
+      - '3000:80'
+    depends_on:
+      backend:
+        condition: service_healthy
+    networks:
+      - homelabos-network
+    restart: unless-stopped
+
+  # ─── Backend ──────────────────────────────────────────────
+  backend:
+    image: ${BACKEND_IMAGE:-ghcr.io/ekazakhiistiyawan/homelabos-backend:latest}
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    container_name: homelabos-backend
+    ports:
+      - '4000:4000'
+    env_file:
+      - ./backend/.env
+    depends_on:
+      mysql:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+    networks:
+      - homelabos-network
+    restart: unless-stopped
+    healthcheck:
+      test: ['CMD', 'curl', '-f', 'http://localhost:4000/api/health']
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s
+
+  # ─── MySQL ────────────────────────────────────────────────
+  mysql:
+    image: mysql:8.0
+    container_name: homelabos-mysql
+    ports:
+      - '3306:3306'
+    environment:
+      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD:-homelabos_root}
+      MYSQL_DATABASE: ${MYSQL_DATABASE:-homelabos}
+      MYSQL_USER: ${MYSQL_USER:-homelabos}
+      MYSQL_PASSWORD: ${MYSQL_PASSWORD:-homelabos_password}
+    volumes:
+      - mysql_data:/var/lib/mysql
+    networks:
+      - homelabos-network
+    restart: unless-stopped
+    healthcheck:
+      test: ['CMD', 'mysqladmin', 'ping', '-h', 'localhost']
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 30s
+    command: --default-authentication-plugin=mysql_native_password --character-set-server=utf8mb4 --collation-server=utf8mb4_unicode_ci
+
+  # ─── Redis ────────────────────────────────────────────────
+  redis:
+    image: redis:7-alpine
+    container_name: homelabos-redis
+    ports:
+      - '6379:6379'
+    volumes:
+      - redis_data:/data
+    networks:
+      - homelabos-network
+    restart: unless-stopped
+    healthcheck:
+      test: ['CMD', 'redis-cli', 'ping']
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    command: redis-server --appendonly yes --maxmemory 256mb --maxmemory-policy allkeys-lru
+
+volumes:
+  mysql_data:
+    driver: local
+  redis_data:
+    driver: local
+
+networks:
+  homelabos-network:
+    driver: bridge

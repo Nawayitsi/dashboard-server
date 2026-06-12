@@ -1,0 +1,273 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mysql"
+  url      = env("DATABASE_URL")
+}
+
+// ─── User & Auth ──────────────────────────────────────────
+
+model User {
+  id            String         @id @default(uuid())
+  email         String         @unique
+  username      String         @unique
+  password      String
+  firstName     String?        @map("first_name")
+  lastName      String?        @map("last_name")
+  avatar        String?
+  role          Role           @default(VIEWER)
+  isActive      Boolean        @default(true) @map("is_active")
+  lastLoginAt   DateTime?      @map("last_login_at")
+  refreshToken  String?        @db.Text @map("refresh_token")
+  createdAt     DateTime       @default(now()) @map("created_at")
+  updatedAt     DateTime       @updatedAt @map("updated_at")
+
+  notifications Notification[]
+  auditLogs     AuditLog[]
+
+  @@map("users")
+}
+
+enum Role {
+  ADMIN
+  VIEWER
+}
+
+// ─── Services ─────────────────────────────────────────────
+
+model Service {
+  id           String          @id @default(uuid())
+  name         String
+  type         ServiceType
+  description  String?         @db.Text
+  url          String?
+  icon         String?
+  color        String?
+  isActive     Boolean         @default(true) @map("is_active")
+  order        Int             @default(0)
+  createdAt    DateTime        @default(now()) @map("created_at")
+  updatedAt    DateTime        @updatedAt @map("updated_at")
+
+  statuses     ServiceStatus[]
+  metrics      Metric[]
+  alerts       Alert[]
+  logs         Log[]
+
+  @@map("services")
+}
+
+enum ServiceType {
+  ROUTER
+  NAS
+  CLOUD
+  MONITORING
+  SECURITY
+  WAF
+  SIEM
+  PROXY
+  APPLICATION
+  OTHER
+}
+
+model ServiceStatus {
+  id          String   @id @default(uuid())
+  serviceId   String   @map("service_id")
+  status      Status   @default(UNKNOWN)
+  responseTime Int?    @map("response_time")
+  message     String?  @db.Text
+  checkedAt   DateTime @default(now()) @map("checked_at")
+
+  service     Service  @relation(fields: [serviceId], references: [id], onDelete: Cascade)
+
+  @@index([serviceId, checkedAt])
+  @@map("service_status")
+}
+
+enum Status {
+  ONLINE
+  OFFLINE
+  DEGRADED
+  MAINTENANCE
+  UNKNOWN
+}
+
+// ─── Metrics ──────────────────────────────────────────────
+
+model Metric {
+  id          String     @id @default(uuid())
+  serviceId   String?    @map("service_id")
+  type        MetricType
+  value       Float
+  unit        String?
+  metadata    Json?
+  recordedAt  DateTime   @default(now()) @map("recorded_at")
+
+  service     Service?   @relation(fields: [serviceId], references: [id], onDelete: Cascade)
+
+  @@index([serviceId, type, recordedAt])
+  @@index([type, recordedAt])
+  @@map("metrics")
+}
+
+enum MetricType {
+  CPU
+  MEMORY
+  DISK
+  NETWORK_IN
+  NETWORK_OUT
+  UPTIME
+  TEMPERATURE
+  LOAD_AVERAGE
+  CONNECTIONS
+  CUSTOM
+}
+
+// ─── Alerts ───────────────────────────────────────────────
+
+model Alert {
+  id           String       @id @default(uuid())
+  serviceId    String?      @map("service_id")
+  severity     Severity     @default(INFO)
+  title        String
+  message      String       @db.Text
+  source       String?
+  isResolved   Boolean      @default(false) @map("is_resolved")
+  acknowledgedAt DateTime?  @map("acknowledged_at")
+  resolvedAt   DateTime?    @map("resolved_at")
+  createdAt    DateTime     @default(now()) @map("created_at")
+
+  service      Service?     @relation(fields: [serviceId], references: [id], onDelete: SetNull)
+
+  @@index([severity, isResolved])
+  @@index([serviceId])
+  @@map("alerts")
+}
+
+enum Severity {
+  CRITICAL
+  WARNING
+  INFO
+}
+
+// ─── Logs ─────────────────────────────────────────────────
+
+model Log {
+  id         String   @id @default(uuid())
+  serviceId  String?  @map("service_id")
+  level      LogLevel @default(INFO)
+  source     String
+  message    String   @db.Text
+  metadata   Json?
+  timestamp  DateTime @default(now())
+
+  service    Service? @relation(fields: [serviceId], references: [id], onDelete: SetNull)
+
+  @@index([level, timestamp])
+  @@index([source, timestamp])
+  @@index([serviceId])
+  @@map("logs")
+}
+
+enum LogLevel {
+  DEBUG
+  INFO
+  WARN
+  ERROR
+  CRITICAL
+}
+
+// ─── Notifications ────────────────────────────────────────
+
+model Notification {
+  id        String   @id @default(uuid())
+  userId    String   @map("user_id")
+  title     String
+  message   String   @db.Text
+  type      NotificationType @default(INFO)
+  isRead    Boolean  @default(false) @map("is_read")
+  link      String?
+  createdAt DateTime @default(now()) @map("created_at")
+
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId, isRead])
+  @@map("notifications")
+}
+
+enum NotificationType {
+  INFO
+  SUCCESS
+  WARNING
+  ERROR
+  ALERT
+}
+
+// ─── Settings ─────────────────────────────────────────────
+
+model Setting {
+  id        String   @id @default(uuid())
+  key       String   @unique
+  value     Json
+  group     String   @default("general")
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  @@index([group])
+  @@map("settings")
+}
+
+// ─── Integrations ─────────────────────────────────────────
+
+model Integration {
+  id          String            @id @default(uuid())
+  name        String
+  type        IntegrationType
+  config      Json
+  isEnabled   Boolean           @default(false) @map("is_enabled")
+  lastSyncAt  DateTime?         @map("last_sync_at")
+  status      IntegrationStatus @default(DISCONNECTED)
+  createdAt   DateTime          @default(now()) @map("created_at")
+  updatedAt   DateTime          @updatedAt @map("updated_at")
+
+  @@unique([type])
+  @@map("integrations")
+}
+
+enum IntegrationType {
+  MIKROTIK
+  NEXTCLOUD
+  SYNOLOGY
+  LIBRENMS
+  SAFELINE
+  SIEM
+  NGINX_PROXY_MANAGER
+}
+
+enum IntegrationStatus {
+  CONNECTED
+  DISCONNECTED
+  ERROR
+  SYNCING
+}
+
+// ─── Audit Logs ───────────────────────────────────────────
+
+model AuditLog {
+  id         String   @id @default(uuid())
+  userId     String?  @map("user_id")
+  action     String
+  resource   String
+  resourceId String?  @map("resource_id")
+  details    Json?
+  ipAddress  String?  @map("ip_address")
+  userAgent  String?  @db.Text @map("user_agent")
+  createdAt  DateTime @default(now()) @map("created_at")
+
+  user       User?    @relation(fields: [userId], references: [id], onDelete: SetNull)
+
+  @@index([userId, createdAt])
+  @@index([action, resource])
+  @@map("audit_logs")
+}

@@ -1,0 +1,47 @@
+# Dependencies
+node_modules/
+.pnp
+.pnp.js
+
+# Build outputs
+dist/
+build/
+
+# Environment files
+.env
+.env.local
+.env.production
+
+# Database
+mysql_data/
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Logs
+logs/
+*.log
+npm-debug.log*
+
+# TypeScript
+*.tsbuildinfo
+
+# Prisma
+# backend/prisma/migrations/ (uncommented to allow tracking db schema changes in Git for CI/CD)
+
+
+# Docker volumes
+redis_data/
+
+# MCP configs and environment setups
+mcp-stich.json
+mcp-stitch.json
+.gemini/
+
