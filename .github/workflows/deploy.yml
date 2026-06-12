@@ -48,7 +48,7 @@ jobs:
       - name: Build frontend
         run: |
           cd frontend
-          npm run build
+          npm run build > ../frontend-build.log 2>&1 || (echo "### Frontend Build Failure" >> $GITHUB_STEP_SUMMARY && echo '```' >> $GITHUB_STEP_SUMMARY && cat ../frontend-build.log >> $GITHUB_STEP_SUMMARY && echo '```' >> $GITHUB_STEP_SUMMARY && exit 1)
 
       - name: Install backend dependencies & generate Prisma
         run: |
@@ -59,7 +59,7 @@ jobs:
       - name: Build backend
         run: |
           cd backend
-          npm run build
+          npm run build > ../backend-build.log 2>&1 || (echo "### Backend Build Failure" >> $GITHUB_STEP_SUMMARY && echo '```' >> $GITHUB_STEP_SUMMARY && cat ../backend-build.log >> $GITHUB_STEP_SUMMARY && echo '```' >> $GITHUB_STEP_SUMMARY && exit 1)
 
       - name: Extract metadata (tags, labels) for Frontend
         id: meta-frontend
