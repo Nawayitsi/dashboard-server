@@ -27,6 +27,38 @@ export class SettingsService {
     );
     return results;
   }
+
+  async getAppearance() {
+    const settings = await prisma.appearanceSetting.findMany();
+    // Convert array of {key, value} to a single object
+    const result: Record<string, string> = {
+      brandName: 'HomelabOS',
+      logo: '',
+      favicon: '/favicon.ico',
+      primaryColor: '#4F8CFF',
+      accentColor: '#7A5CFF',
+      theme: 'dark',
+      sidebarStyle: 'glass',
+      cardStyle: 'glass',
+    };
+    settings.forEach(s => {
+      result[s.key] = s.value;
+    });
+    return result;
+  }
+
+  async updateAppearance(data: Record<string, string>) {
+    const results = await Promise.all(
+      Object.entries(data).map(([key, value]) =>
+        prisma.appearanceSetting.upsert({
+          where: { key },
+          update: { value: String(value) },
+          create: { key, value: String(value) },
+        })
+      )
+    );
+    return results;
+  }
 }
 
 export const settingsService = new SettingsService();

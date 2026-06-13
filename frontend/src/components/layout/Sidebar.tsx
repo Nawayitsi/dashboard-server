@@ -14,6 +14,7 @@ import {
 } from 'lucide-react';
 import { useSidebarStore } from '../../store/sidebarStore';
 import { cn } from '../../utils/cn';
+import { useAppearance } from '../../store/AppearanceContext';
 
 const menuItems = [
   { path: '/', name: 'Dashboard', icon: LayoutDashboard },
@@ -28,23 +29,43 @@ const menuItems = [
 
 export function Sidebar() {
   const { isOpen, toggle } = useSidebarStore();
+  const { brandName, logo, primaryColor, accentColor, sidebarStyle } = useAppearance();
+
+  // Sidebar styling classes based on settings
+  const sidebarClass = 
+    sidebarStyle === 'solid'
+      ? 'bg-[#0B0D10] border-r border-white/5 shadow-2xl'
+      : sidebarStyle === 'transparent'
+      ? 'bg-transparent border-none shadow-none'
+      : 'glass-panel shadow-2xl'; // default glass
 
   return (
     <aside
       className={cn(
-        "fixed top-4 bottom-4 left-4 z-40 flex flex-col glass-panel rounded-2xl transition-all duration-300 select-none shadow-2xl",
-        isOpen ? "w-64" : "w-20"
+        "fixed top-4 bottom-4 left-4 z-40 flex flex-col rounded-2xl transition-all duration-300 select-none",
+        isOpen ? "w-64" : "w-20",
+        sidebarClass
       )}
     >
       {/* Brand Header */}
       <div className="flex h-16 items-center justify-between px-4 border-b border-white/5">
         <div className="flex items-center gap-3 overflow-hidden">
-          <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-gradient-to-tr from-[#4F8CFF] to-[#7A5CFF] text-white shadow-lg shadow-[#4F8CFF]/20 shrink-0">
-            <Terminal className="h-5 w-5" />
+          <div 
+            className="flex h-10 w-10 items-center justify-center rounded-xl text-white shadow-lg shrink-0 overflow-hidden"
+            style={{ 
+              backgroundImage: logo ? 'none' : `linear-gradient(to top right, ${primaryColor}, ${accentColor})`,
+              boxShadow: `0 10px 15px -3px ${primaryColor}20`
+            }}
+          >
+            {logo ? (
+              <img src={logo} alt="Logo" className="h-full w-full object-cover" />
+            ) : (
+              <Terminal className="h-5 w-5" />
+            )}
           </div>
           {isOpen && (
             <span className="font-bold text-lg bg-gradient-to-r from-white to-gray-400 bg-clip-text text-transparent truncate tracking-wide">
-              HomelabOS
+              {brandName || 'HomelabOS'}
             </span>
           )}
         </div>
@@ -69,9 +90,14 @@ export function Sidebar() {
               cn(
                 "flex items-center gap-3 rounded-xl px-3.5 py-3 text-sm font-medium transition-all duration-200 relative group",
                 isActive
-                  ? "text-white bg-white/10 shadow-inner border-l-2 border-[#4F8CFF]"
+                  ? "text-white bg-white/10 shadow-inner border-l-2"
                   : "text-gray-400 hover:text-white hover:bg-white/5"
               )
+            }
+            style={({ isActive }) => 
+              isActive 
+                ? { borderLeftColor: primaryColor } 
+                : {}
             }
           >
             <item.icon className="h-5 w-5 shrink-0" />

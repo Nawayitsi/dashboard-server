@@ -18,6 +18,7 @@ import notificationsRoutes from './modules/notifications/notifications.routes';
 import settingsRoutes from './modules/settings/settings.routes';
 import integrationsRoutes from './modules/integrations/integrations.routes';
 import applicationsRoutes from './modules/applications/applications.routes';
+import automationRoutes from './modules/automation/automation.routes';
 
 const app = express();
 
@@ -46,6 +47,7 @@ app.use('/api/notifications', notificationsRoutes);
 app.use('/api/settings', settingsRoutes);
 app.use('/api/integrations', integrationsRoutes);
 app.use('/api/applications', applicationsRoutes);
+app.use('/api/automation', automationRoutes);
 
 // ─── Error Handling ───────────────────────────────────────
 app.use(notFoundHandler);

@@ -16,6 +16,7 @@ import { safelineConnector } from './integrations/safeline/safeline.connector';
 import { siemConnector } from './integrations/siem/siem.connector';
 import { npmConnector } from './integrations/npm/npm.connector';
 import { metricsScheduler } from './jobs/metrics.job';
+import { automationScheduler } from './jobs/automation.job';
 
 const server = http.createServer(app);
 
@@ -43,6 +44,7 @@ const startServer = async () => {
 
     // Start background metrics poller scheduler
     metricsScheduler.start();
+    automationScheduler.start();
 
     server.listen(config.port, () => {
       logger.info(`
@@ -67,6 +69,7 @@ const startServer = async () => {
 const shutdown = async () => {
   logger.info('🛑 Shutting down...');
   metricsScheduler.stop();
+  automationScheduler.stop();
   server.close();
   await prisma.$disconnect();
   await redis.disconnect();

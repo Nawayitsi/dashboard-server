@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { useAuthStore } from '../store/authStore';
 import { authApi } from '../services/auth.api';
 import { Terminal, Lock, Mail, Loader2 } from 'lucide-react';
+import { useAppearance } from '../store/AppearanceContext';
 
 export function Login() {
   const [email, setEmail] = useState('');
@@ -10,6 +11,7 @@ export function Login() {
   const [loading, setLoading] = useState(false);
   const setAuth = useAuthStore((state) => state.setAuth);
   const navigate = useNavigate();
+  const { brandName, logo, primaryColor, accentColor } = useAppearance();
 
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -33,10 +35,20 @@ export function Login() {
         <div className="absolute top-0 left-0 right-0 h-[1px] bg-gradient-to-r from-transparent via-white/10 to-transparent" />
         
         <div className="flex flex-col items-center mb-8">
-          <div className="h-12 w-12 rounded-2xl bg-gradient-to-tr from-[#4F8CFF] to-[#7A5CFF] flex items-center justify-center text-white shadow-lg shadow-[#4F8CFF]/20 mb-3">
-            <Terminal className="h-6 w-6" />
+          <div 
+            className="h-12 w-12 rounded-2xl flex items-center justify-center text-white shadow-lg shrink-0 overflow-hidden mb-3"
+            style={{ 
+              backgroundImage: logo ? 'none' : `linear-gradient(to top right, ${primaryColor}, ${accentColor})`,
+              boxShadow: `0 10px 15px -3px ${primaryColor}20`
+            }}
+          >
+            {logo ? (
+              <img src={logo} alt="Logo" className="h-full w-full object-cover" />
+            ) : (
+              <Terminal className="h-6 w-6" />
+            )}
           </div>
-          <h1 className="text-2xl font-extrabold text-white tracking-tight">HomelabOS</h1>
+          <h1 className="text-2xl font-extrabold text-white tracking-tight">{brandName || 'HomelabOS'}</h1>
           <p className="text-xs text-gray-400 mt-1.5">Sign in to administer self-hosted infrastructure</p>
         </div>
 
@@ -50,7 +62,11 @@ export function Login() {
                 required
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
-                className="w-full pl-10 pr-4 py-3 bg-white/2 border border-white/5 focus:border-[#4F8CFF]/50 focus:bg-white/5 outline-none rounded-xl text-sm transition-all placeholder:text-gray-600"
+                className="w-full pl-10 pr-4 py-3 bg-white/2 border border-white/5 focus:bg-white/5 outline-none rounded-xl text-sm transition-all placeholder:text-gray-600 focus:border-primary-color"
+                style={{ 
+                  // Fallback for custom focus outline
+                  borderWidth: '1px',
+                }}
                 placeholder="admin@homelabos.local"
               />
             </div>
@@ -65,7 +81,7 @@ export function Login() {
                 required
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
-                className="w-full pl-10 pr-4 py-3 bg-white/2 border border-white/5 focus:border-[#4F8CFF]/50 focus:bg-white/5 outline-none rounded-xl text-sm transition-all placeholder:text-gray-600"
+                className="w-full pl-10 pr-4 py-3 bg-white/2 border border-white/5 focus:bg-white/5 outline-none rounded-xl text-sm transition-all placeholder:text-gray-600"
                 placeholder="••••••••"
               />
             </div>
@@ -74,7 +90,11 @@ export function Login() {
           <button
             type="submit"
             disabled={loading}
-            className="w-full py-3.5 rounded-xl bg-gradient-to-r from-[#4F8CFF] to-[#7A5CFF] text-white text-sm font-semibold hover:shadow-lg hover:shadow-[#4F8CFF]/15 transition-all flex items-center justify-center gap-2 disabled:opacity-50"
+            className="w-full py-3.5 rounded-xl text-white text-sm font-semibold hover:shadow-lg transition-all flex items-center justify-center gap-2 disabled:opacity-50"
+            style={{
+              backgroundImage: `linear-gradient(to right, ${primaryColor}, ${accentColor})`,
+              boxShadow: `0 4px 14px 0 ${primaryColor}20`
+            }}
           >
             {loading ? (
               <>

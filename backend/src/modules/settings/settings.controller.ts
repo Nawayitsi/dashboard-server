@@ -31,6 +31,20 @@ export class SettingsController {
       }
     } catch (error) { next(error); }
   }
+
+  async getAppearance(req: Request, res: Response, next: NextFunction) {
+    try {
+      const settings = await settingsService.getAppearance();
+      sendSuccess(res, settings);
+    } catch (error) { next(error); }
+  }
+
+  async updateAppearance(req: Request, res: Response, next: NextFunction) {
+    try {
+      const result = await settingsService.updateAppearance(req.body);
+      sendSuccess(res, result, 'Appearance settings updated');
+    } catch (error) { next(error); }
+  }
 }
 
 export const settingsController = new SettingsController();

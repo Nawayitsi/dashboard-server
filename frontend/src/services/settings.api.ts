@@ -9,6 +9,14 @@ export const settingsApi = {
     const res = await api.put('/settings', data);
     return res.data.data;
   },
+  getAppearance: async () => {
+    const res = await api.get('/settings/appearance');
+    return res.data.data;
+  },
+  updateAppearance: async (data: Record<string, string>) => {
+    const res = await api.put('/settings/appearance', data);
+    return res.data.data;
+  },
 };
 
 export const integrationsApi = {

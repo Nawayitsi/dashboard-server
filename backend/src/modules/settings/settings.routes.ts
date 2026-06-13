@@ -7,6 +7,8 @@ const router = Router();
 router.use(authenticate);
 
 router.get('/', (req, res, next) => settingsController.findAll(req, res, next));
+router.get('/appearance', (req, res, next) => settingsController.getAppearance(req, res, next));
+router.put('/appearance', adminOnly, (req, res, next) => settingsController.updateAppearance(req, res, next));
 router.get('/:key', (req, res, next) => settingsController.get(req, res, next));
 router.put('/', adminOnly, (req, res, next) => settingsController.update(req, res, next));
 
