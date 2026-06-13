@@ -4,9 +4,9 @@ set -e
 # ==============================================================================
 # Configuration (Silakan sesuaikan jika diperlukan)
 # ==============================================================================
-SSH_HOST="20.20.20.80"
+SSH_HOST="82.41.42.239"
 SSH_USER="root"         # Ganti dengan username SSH server Anda (misal: root, ubuntu, dll.)
-SSH_PORT="22"           # Ganti jika menggunakan port kustom
+SSH_PORT="2077"           # Ganti jika menggunakan port kustom
 DEPLOY_DIR="homelabos"   # Direktori tempat docker-compose di server
 
 echo "====== 🚀 Memulai Deployment HomelabOS ======"
