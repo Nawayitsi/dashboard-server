@@ -60,7 +60,7 @@ export class DashboardController {
 
   async removeWidgetFromDashboard(req: Request, res: Response, next: NextFunction) {
     try {
-      const { id } = req.params;
+      const id = req.params.id as string;
       await dashboardService.removeWidgetFromDashboard(id);
       sendSuccess(res, null, 'Widget removed from dashboard');
     } catch (error) { next(error); }

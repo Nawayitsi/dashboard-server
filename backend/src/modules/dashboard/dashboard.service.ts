@@ -1,6 +1,7 @@
 import prisma from '../../config/database';
 import redis from '../../config/redis';
 import { logger } from '../../utils/logger';
+import { AppError } from '../../middleware/errorHandler';
 
 export class DashboardService {
   private CACHE_KEY = 'dashboard:overview';
@@ -143,6 +144,10 @@ export class DashboardService {
           },
         },
       }) as any;
+    }
+
+    if (!dashboard) {
+      throw new AppError('Could not find or initialize dashboard', 500);
     }
 
     // 2. Fetch user's layouts

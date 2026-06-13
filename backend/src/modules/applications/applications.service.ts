@@ -55,7 +55,7 @@ export class ApplicationsService {
 
     // 2. Synchronize to the Service model to keep launcher working
     // Map category or use default ServiceType
-    let serviceType = ServiceType.APPLICATION;
+    let serviceType: ServiceType = ServiceType.APPLICATION;
     if (data.category) {
       const upperCategory = data.category.toUpperCase();
       if (Object.values(ServiceType).includes(upperCategory as any)) {
@@ -117,7 +117,7 @@ export class ApplicationsService {
     });
 
     // 2. Update synchronized service
-    let serviceType = undefined;
+    let serviceType: ServiceType | undefined = undefined;
     if (data.category) {
       const upperCategory = data.category.toUpperCase();
       if (Object.values(ServiceType).includes(upperCategory as any)) {
