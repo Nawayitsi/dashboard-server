@@ -16,6 +16,9 @@ RUN npx prisma generate
 # Copy compiled JavaScript from runner
 COPY dist ./dist/
 
+# Copy source code for prisma seeding utilities
+COPY src ./src/
+
 # Expose server port
 EXPOSE 4000
 
