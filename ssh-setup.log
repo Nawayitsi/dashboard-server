@@ -1,0 +1,5 @@
+Secret Validation:
+SSH_HOST length: 12
+SSH_USERNAME length: 7
+SSH_KEY length: 410
+ssh: connect to host 82.41.42.239 port 2077: Connection refused
