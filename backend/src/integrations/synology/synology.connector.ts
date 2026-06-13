@@ -1,5 +1,5 @@
 import axios, { AxiosInstance } from 'axios';
-import { IntegrationConnector, ServiceHealth, MetricData, IntegrationConfig } from '../base/integration.interface';
+import { IntegrationConnector, ServiceHealth, MetricData, IntegrationConfig, ConfigurationSchema } from '../base/integration.interface';
 import { logger } from '../../utils/logger';
 
 export class SynologyConnector implements IntegrationConnector {
@@ -83,6 +83,21 @@ export class SynologyConnector implements IntegrationConnector {
     }
     this.client = null;
     this.sid = null;
+  }
+
+  configurationSchema(): ConfigurationSchema {
+    return {
+      fields: [
+        { key: 'url', label: 'DSM URL', type: 'url', placeholder: 'https://nas.local:5001', required: true },
+        { key: 'username', label: 'Username', type: 'text', placeholder: 'admin', required: true },
+        { key: 'password', label: 'Password', type: 'password', placeholder: '••••••••', required: true },
+      ],
+      widgets: [
+        { id: 'synology-cpu', name: 'CPU Usage', description: 'NAS processor utilization', category: 'SYSTEM', renderer: 'CpuWidget' },
+        { id: 'synology-memory', name: 'Memory Usage', description: 'NAS RAM utilization', category: 'SYSTEM', renderer: 'RamWidget' },
+        { id: 'synology-storage', name: 'Storage Volumes', description: 'Volume capacity and health', category: 'STORAGE', renderer: 'DiskWidget' },
+      ],
+    };
   }
 }
 

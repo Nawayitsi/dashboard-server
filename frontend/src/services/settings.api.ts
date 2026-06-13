@@ -10,17 +10,46 @@ export const settingsApi = {
     return res.data.data;
   },
 };
+
 export const integrationsApi = {
   findAll: async () => {
     const res = await api.get('/integrations');
     return res.data.data;
   },
-  update: async (id: string, data: { config?: Record<string, any>; isEnabled?: boolean }) => {
+  findById: async (id: string) => {
+    const res = await api.get(`/integrations/${id}`);
+    return res.data.data;
+  },
+  update: async (id: string, data: { config?: Record<string, any>; isEnabled?: boolean; name?: string }) => {
     const res = await api.put(`/integrations/${id}`, data);
+    return res.data.data;
+  },
+  saveCredentials: async (id: string, credentials: Record<string, string>) => {
+    const res = await api.put(`/integrations/${id}/credentials`, { credentials });
+    return res.data.data;
+  },
+  getCredentials: async (id: string) => {
+    const res = await api.get(`/integrations/${id}/credentials`);
+    return res.data.data;
+  },
+  getSchema: async (id: string) => {
+    const res = await api.get(`/integrations/${id}/schema`);
+    return res.data.data;
+  },
+  getAllSchemas: async () => {
+    const res = await api.get('/integrations/schemas/all');
     return res.data.data;
   },
   test: async (id: string) => {
     const res = await api.post(`/integrations/${id}/test`);
+    return res.data.data;
+  },
+  sync: async (id: string) => {
+    const res = await api.post(`/integrations/${id}/sync`);
+    return res.data.data;
+  },
+  delete: async (id: string) => {
+    const res = await api.delete(`/integrations/${id}`);
     return res.data.data;
   },
 };

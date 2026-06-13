@@ -16,6 +16,9 @@ export interface IntegrationConnector {
 
   /** Disconnect from the service */
   disconnect(): Promise<void>;
+
+  /** Return the configuration schema for the dynamic form wizard */
+  configurationSchema(): ConfigurationSchema;
 }
 
 export interface ServiceHealth {
@@ -41,4 +44,37 @@ export interface IntegrationConfig {
   password?: string;
   apiToken?: string;
   [key: string]: any;
+}
+
+// ─── Dynamic Form Schema ──────────────────────────────────
+
+export interface ConfigFieldOption {
+  label: string;
+  value: string;
+}
+
+export interface ConfigField {
+  key: string;
+  label: string;
+  type: 'text' | 'number' | 'password' | 'url' | 'select' | 'toggle';
+  placeholder?: string;
+  required?: boolean;
+  defaultValue?: any;
+  options?: ConfigFieldOption[];
+  description?: string;
+}
+
+export interface ConfigurationSchema {
+  fields: ConfigField[];
+  /** Widget definitions this integration can provide */
+  widgets?: WidgetDefinition[];
+}
+
+export interface WidgetDefinition {
+  id: string;
+  name: string;
+  description: string;
+  category: string;
+  renderer: string;
+  defaultSettings?: Record<string, any>;
 }

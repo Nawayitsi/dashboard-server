@@ -1,5 +1,5 @@
 import axios, { AxiosInstance } from 'axios';
-import { IntegrationConnector, ServiceHealth, MetricData, IntegrationConfig } from '../base/integration.interface';
+import { IntegrationConnector, ServiceHealth, MetricData, IntegrationConfig, ConfigurationSchema } from '../base/integration.interface';
 import { logger } from '../../utils/logger';
 
 export class MikroTikConnector implements IntegrationConnector {
@@ -65,6 +65,24 @@ export class MikroTikConnector implements IntegrationConnector {
     this.client = null;
   }
 
+  configurationSchema(): ConfigurationSchema {
+    return {
+      fields: [
+        { key: 'host', label: 'Host / IP Address', type: 'text', placeholder: '192.168.88.1', required: true },
+        { key: 'port', label: 'API Port', type: 'number', placeholder: '80', defaultValue: 80 },
+        { key: 'username', label: 'Username', type: 'text', placeholder: 'admin', required: true },
+        { key: 'password', label: 'Password', type: 'password', placeholder: '••••••••', required: true },
+        { key: 'ssl', label: 'Use SSL', type: 'toggle', defaultValue: false },
+      ],
+      widgets: [
+        { id: 'mikrotik-cpu', name: 'CPU Usage', description: 'Real-time CPU load from RouterOS', category: 'SYSTEM', renderer: 'CpuWidget' },
+        { id: 'mikrotik-memory', name: 'Memory Usage', description: 'RAM utilization from RouterOS', category: 'SYSTEM', renderer: 'RamWidget' },
+        { id: 'mikrotik-traffic', name: 'Network Traffic', description: 'Interface throughput stats', category: 'NETWORK', renderer: 'NetworkWidget' },
+        { id: 'mikrotik-uptime', name: 'Uptime', description: 'System uptime counter', category: 'SYSTEM', renderer: 'UptimeWidget' },
+      ],
+    };
+  }
+
   private parseUptime(uptime: string): number {
     let seconds = 0;
     const weeks = uptime.match(/(\d+)w/);
@@ -82,3 +100,4 @@ export class MikroTikConnector implements IntegrationConnector {
 }
 
 export const mikrotikConnector = new MikroTikConnector();
+

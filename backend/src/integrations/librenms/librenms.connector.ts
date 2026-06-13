@@ -1,5 +1,5 @@
 import axios, { AxiosInstance } from 'axios';
-import { IntegrationConnector, ServiceHealth, MetricData, IntegrationConfig } from '../base/integration.interface';
+import { IntegrationConnector, ServiceHealth, MetricData, IntegrationConfig, ConfigurationSchema } from '../base/integration.interface';
 import { logger } from '../../utils/logger';
 
 export class LibreNMSConnector implements IntegrationConnector {
@@ -52,6 +52,19 @@ export class LibreNMSConnector implements IntegrationConnector {
   }
 
   async disconnect(): Promise<void> { this.client = null; }
+
+  configurationSchema(): ConfigurationSchema {
+    return {
+      fields: [
+        { key: 'url', label: 'LibreNMS URL', type: 'url', placeholder: 'https://nms.example.com', required: true },
+        { key: 'apiToken', label: 'API Token', type: 'password', placeholder: 'Your LibreNMS API token', required: true },
+      ],
+      widgets: [
+        { id: 'librenms-devices', name: 'Device Count', description: 'Total monitored devices', category: 'NETWORK', renderer: 'MetricWidget' },
+        { id: 'librenms-alerts', name: 'Active Alerts', description: 'LibreNMS alert notifications', category: 'SECURITY', renderer: 'AlertWidget' },
+      ],
+    };
+  }
 }
 
 export const librenmsConnector = new LibreNMSConnector();

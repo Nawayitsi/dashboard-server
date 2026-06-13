@@ -1,5 +1,5 @@
 import axios, { AxiosInstance } from 'axios';
-import { IntegrationConnector, ServiceHealth, MetricData, IntegrationConfig } from '../base/integration.interface';
+import { IntegrationConnector, ServiceHealth, MetricData, IntegrationConfig, ConfigurationSchema } from '../base/integration.interface';
 import { logger } from '../../utils/logger';
 
 export class SIEMConnector implements IntegrationConnector {
@@ -53,6 +53,20 @@ export class SIEMConnector implements IntegrationConnector {
   }
 
   async disconnect(): Promise<void> { this.client = null; }
+
+  configurationSchema(): ConfigurationSchema {
+    return {
+      fields: [
+        { key: 'url', label: 'SIEM URL', type: 'url', placeholder: 'https://siem.example.com', required: true },
+        { key: 'apiToken', label: 'API Token', type: 'password', placeholder: 'Your SIEM API token', required: true },
+      ],
+      widgets: [
+        { id: 'siem-events', name: 'Total Events', description: 'Aggregated security event count', category: 'SECURITY', renderer: 'MetricWidget' },
+        { id: 'siem-incidents', name: 'Active Incidents', description: 'Currently open security incidents', category: 'SECURITY', renderer: 'MetricWidget' },
+        { id: 'siem-threats', name: 'Threats Detected', description: 'Confirmed threat detections', category: 'SECURITY', renderer: 'MetricWidget' },
+      ],
+    };
+  }
 }
 
 export const siemConnector = new SIEMConnector();

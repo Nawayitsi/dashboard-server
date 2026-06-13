@@ -1,5 +1,5 @@
 import axios, { AxiosInstance } from 'axios';
-import { IntegrationConnector, ServiceHealth, MetricData, IntegrationConfig } from '../base/integration.interface';
+import { IntegrationConnector, ServiceHealth, MetricData, IntegrationConfig, ConfigurationSchema } from '../base/integration.interface';
 import { logger } from '../../utils/logger';
 
 export class NextcloudConnector implements IntegrationConnector {
@@ -55,6 +55,20 @@ export class NextcloudConnector implements IntegrationConnector {
   }
 
   async disconnect(): Promise<void> { this.client = null; }
+
+  configurationSchema(): ConfigurationSchema {
+    return {
+      fields: [
+        { key: 'url', label: 'Nextcloud URL', type: 'url', placeholder: 'https://cloud.example.com', required: true },
+        { key: 'username', label: 'Username', type: 'text', placeholder: 'admin', required: true },
+        { key: 'password', label: 'App Password', type: 'password', placeholder: '••••••••', required: true, description: 'Use an App Password from Nextcloud Security settings' },
+      ],
+      widgets: [
+        { id: 'nextcloud-storage', name: 'Storage Usage', description: 'Database size and file storage', category: 'STORAGE', renderer: 'DiskWidget' },
+        { id: 'nextcloud-status', name: 'Service Status', description: 'Nextcloud availability', category: 'SYSTEM', renderer: 'StatusWidget' },
+      ],
+    };
+  }
 }
 
 export const nextcloudConnector = new NextcloudConnector();

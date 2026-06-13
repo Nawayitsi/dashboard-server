@@ -1,5 +1,5 @@
 import axios, { AxiosInstance } from 'axios';
-import { IntegrationConnector, ServiceHealth, MetricData, IntegrationConfig } from '../base/integration.interface';
+import { IntegrationConnector, ServiceHealth, MetricData, IntegrationConfig, ConfigurationSchema } from '../base/integration.interface';
 import { logger } from '../../utils/logger';
 
 export class SafeLineConnector implements IntegrationConnector {
@@ -55,6 +55,19 @@ export class SafeLineConnector implements IntegrationConnector {
   }
 
   async disconnect(): Promise<void> { this.client = null; }
+
+  configurationSchema(): ConfigurationSchema {
+    return {
+      fields: [
+        { key: 'url', label: 'SafeLine URL', type: 'url', placeholder: 'https://waf.example.com', required: true },
+        { key: 'apiToken', label: 'API Token', type: 'password', placeholder: 'Your SafeLine API token', required: true },
+      ],
+      widgets: [
+        { id: 'safeline-threats', name: 'Threats Detected', description: 'Total WAF threat detections', category: 'SECURITY', renderer: 'MetricWidget' },
+        { id: 'safeline-blocked', name: 'Blocked Requests', description: 'Requests blocked by WAF rules', category: 'SECURITY', renderer: 'MetricWidget' },
+      ],
+    };
+  }
 }
 
 export const safelineConnector = new SafeLineConnector();
