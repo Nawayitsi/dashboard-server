@@ -309,7 +309,7 @@ export function Applications() {
                       <label className="text-xs font-semibold text-gray-400 uppercase">Open Target</label>
                       <select
                         value={customApp.openIn}
-                        onChange={(e) => setCustomApp(prev => ({ ...prev, openIn: e.target.value }))}
+                        onChange={(e) => setCustomApp(prev => ({ ...prev, openIn: e.target.value as 'SAME_TAB' | 'NEW_TAB' | 'EMBEDDED' }))}
                         className="w-full px-3.5 py-2.5 bg-[#0B0D10] border border-white/5 rounded-xl text-sm outline-none focus:border-[#4F8CFF]/50"
                       >
                         <option value="NEW_TAB">Open in New Tab</option>
