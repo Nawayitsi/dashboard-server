@@ -1,0 +1,5 @@
+Secret Validation:
+SSH_HOST length: 11
+SSH_USERNAME length: 0
+SSH_KEY length: 0
+Error: One or more SSH secrets are empty!
