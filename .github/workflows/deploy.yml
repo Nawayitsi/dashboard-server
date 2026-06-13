@@ -127,6 +127,21 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v4
 
+      - name: Validate secrets
+        env:
+          SSH_HOST: ${{ secrets.SSH_HOST }}
+          SSH_USERNAME: ${{ secrets.SSH_USERNAME }}
+          SSH_KEY: ${{ secrets.SSH_KEY }}
+        run: |
+          echo "Secret Validation:" > ssh-setup.log
+          echo "SSH_HOST length: ${#SSH_HOST}" >> ssh-setup.log
+          echo "SSH_USERNAME length: ${#SSH_USERNAME}" >> ssh-setup.log
+          echo "SSH_KEY length: ${#SSH_KEY}" >> ssh-setup.log
+          if [ -z "$SSH_HOST" ] || [ -z "$SSH_USERNAME" ] || [ -z "$SSH_KEY" ]; then
+            echo "Error: One or more SSH secrets are empty!" >> ssh-setup.log
+            exit 1
+          fi
+
       - name: Set up SSH key and known_hosts
         run: |
           mkdir -p ~/.ssh
@@ -136,7 +151,8 @@ jobs:
 
       - name: Create deployment directory on server
         run: |
-          ssh -i ~/.ssh/id_rsa -p ${{ secrets.SSH_PORT || '22' }} -o StrictHostKeyChecking=no ${{ secrets.SSH_USERNAME }}@${{ secrets.SSH_HOST }} "mkdir -p ${{ secrets.DEPLOY_DIR || 'homelabos' }}" > ssh-setup.log 2>&1
+          ssh -i ~/.ssh/id_rsa -p ${{ secrets.SSH_PORT || '22' }} -o StrictHostKeyChecking=no ${{ secrets.SSH_USERNAME }}@${{ secrets.SSH_HOST }} "mkdir -p ${{ secrets.DEPLOY_DIR || 'homelabos' }}" >> ssh-setup.log 2>&1
+
 
       - name: Copy docker-compose.yml via SCP
         run: |
