@@ -1,0 +1,5 @@
+Secret Validation:
+SSH_HOST length: 11
+SSH_USERNAME length: 7
+SSH_KEY length: 410
+ssh: connect to host 20.20.20.80 port 22: Connection timed out
