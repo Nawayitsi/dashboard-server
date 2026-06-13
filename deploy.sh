@@ -7,7 +7,7 @@ set -e
 SSH_HOST="82.41.42.239"
 SSH_USER="dashnew"         # Ganti dengan username SSH server Anda (misal: root, ubuntu, dll.)
 SSH_PORT="2277"           # Ganti jika menggunakan port kustom
-DEPLOY_DIR="homelabos"   # Direktori tempat docker-compose di server
+DEPLOY_DIR="/home/dashboard-server" # Direktori tempat docker-compose di server
 
 echo "====== 🚀 Memulai Deployment HomelabOS ======"
 
