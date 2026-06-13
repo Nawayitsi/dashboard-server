@@ -1,0 +1,2 @@
+scp: dest open "/home/dashboard-server/docker-compose.yml": Permission denied
+scp: failed to upload file docker-compose.yml to /home/dashboard-server/
