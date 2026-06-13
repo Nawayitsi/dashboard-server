@@ -1,26 +1,32 @@
-# Use Node.js base image
+# Stage 1: Build
+FROM node:20-alpine AS builder
+
+WORKDIR /app
+
+COPY package*.json ./
+COPY tsconfig.json ./
+RUN npm install
+
+COPY src ./src/
+COPY prisma ./prisma/
+RUN npx prisma generate
+RUN npm run build
+
+# Stage 2: Production Run
 FROM node:20-alpine
 
 WORKDIR /app
 
-# Copy package configurations
 COPY package*.json ./
-
-# Install production dependencies
 RUN npm install --omit=dev
 
-# Copy Prisma schema and generate client for target platform
 COPY prisma ./prisma/
 RUN npx prisma generate
 
-# Copy compiled JavaScript from runner
-COPY dist ./dist/
+# Copy compiled code from Stage 1 builder
+COPY --from=builder /app/dist ./dist/
+COPY --from=builder /app/src ./src/
 
-# Copy source code for prisma seeding utilities
-COPY src ./src/
-
-# Expose server port
 EXPOSE 4000
 
-# Run db push, seed, and start the backend service
 CMD ["sh", "-c", "npx prisma db push && npx prisma db seed && node dist/index.js"]
