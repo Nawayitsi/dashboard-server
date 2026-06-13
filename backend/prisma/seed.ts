@@ -109,6 +109,42 @@ async function main() {
   }
   console.log('✅ Default settings created');
 
+  // ─── Create Default Widgets & Dashboard ─────────────────
+  const defaultWidgets = [
+    // System Widgets
+    { id: 'system-cpu', name: 'System CPU Usage', description: 'Overall CPU utilization of the host', category: 'SYSTEM', dataSource: 'SYSTEM', renderer: 'CpuWidget' },
+    { id: 'system-ram', name: 'System RAM Usage', description: 'Memory utilization of the host', category: 'SYSTEM', dataSource: 'SYSTEM', renderer: 'RamWidget' },
+    { id: 'system-disk', name: 'System Disk Usage', description: 'Disk space usage on root mount', category: 'STORAGE', dataSource: 'SYSTEM', renderer: 'DiskWidget' },
+    // MikroTik
+    { id: 'mikrotik-cpu', name: 'MikroTik CPU', description: 'MikroTik CPU usage', category: 'SYSTEM', dataSource: 'MIKROTIK', renderer: 'CpuWidget' },
+    { id: 'mikrotik-memory', name: 'MikroTik RAM', description: 'MikroTik Memory usage', category: 'SYSTEM', dataSource: 'MIKROTIK', renderer: 'RamWidget' },
+    { id: 'mikrotik-traffic', name: 'MikroTik Network', description: 'Interface throughput stats', category: 'NETWORK', dataSource: 'MIKROTIK', renderer: 'NetworkWidget' },
+    // NPM
+    { id: 'npm-proxies', name: 'Proxy Hosts', description: 'Number of active proxy hosts', category: 'NETWORK', dataSource: 'NGINX_PROXY_MANAGER', renderer: 'MetricWidget' },
+    { id: 'npm-certs', name: 'SSL Certificates', description: 'SSL certificate status', category: 'SECURITY', dataSource: 'NGINX_PROXY_MANAGER', renderer: 'MetricWidget' },
+  ];
+
+  for (const wd of defaultWidgets) {
+    await prisma.widget.upsert({
+      where: { id: wd.id },
+      update: {},
+      create: wd,
+    });
+  }
+  console.log('✅ Default widgets seeded');
+
+  // Create default dashboard
+  await prisma.dashboard.upsert({
+    where: { id: 'default-dashboard' },
+    update: {},
+    create: {
+      id: 'default-dashboard',
+      name: 'Main Dashboard',
+      isDefault: true,
+    },
+  });
+  console.log('✅ Default dashboard created');
+
   console.log('🎉 Seed complete!');
 }
 

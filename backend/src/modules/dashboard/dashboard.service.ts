@@ -87,6 +87,163 @@ export class DashboardService {
     }
     return grouped;
   }
+
+  async getLayout(userId: string) {
+    // 1. Get default dashboard
+    let dashboard = await prisma.dashboard.findFirst({
+      where: { isDefault: true },
+      include: {
+        widgets: {
+          include: {
+            widget: true,
+          },
+        },
+      },
+    });
+
+    if (!dashboard) {
+      dashboard = await prisma.dashboard.create({
+        data: {
+          id: 'default-dashboard',
+          name: 'Main Dashboard',
+          isDefault: true,
+        },
+        include: {
+          widgets: {
+            include: {
+              widget: true,
+            },
+          },
+        },
+      });
+    }
+
+    // Auto-populate system widgets if empty
+    if (dashboard.widgets.length === 0) {
+      const defaultSystemWidgets = await prisma.widget.findMany({
+        where: { id: { in: ['system-cpu', 'system-ram', 'system-disk'] } },
+      });
+
+      for (const w of defaultSystemWidgets) {
+        await prisma.dashboardWidget.create({
+          data: {
+            dashboardId: dashboard.id,
+            widgetId: w.id,
+          },
+        });
+      }
+
+      dashboard = await prisma.dashboard.findFirst({
+        where: { id: dashboard.id },
+        include: {
+          widgets: {
+            include: {
+              widget: true,
+            },
+          },
+        },
+      }) as any;
+    }
+
+    // 2. Fetch user's layouts
+    const layouts = await prisma.widgetLayout.findMany({
+      where: { userId, dashboardId: dashboard.id },
+    });
+
+    const layoutMap = new Map(layouts.map(l => [l.dashboardWidgetId, l]));
+
+    // 3. Map dashboard widgets with layouts
+    const widgetsWithLayout = dashboard.widgets.map((dw, index) => {
+      const savedLayout = layoutMap.get(dw.id);
+      const defaultLayout = {
+        x: (index * 4) % 12,
+        y: Math.floor(index / 3) * 4,
+        w: 4,
+        h: 4,
+      };
+
+      return {
+        id: dw.id,
+        widgetId: dw.widgetId,
+        name: dw.title || dw.widget.name,
+        description: dw.widget.description,
+        category: dw.widget.category,
+        dataSource: dw.widget.dataSource,
+        renderer: dw.widget.renderer,
+        config: dw.config,
+        layout: savedLayout ? {
+          x: savedLayout.x,
+          y: savedLayout.y,
+          w: savedLayout.w,
+          h: savedLayout.h,
+        } : defaultLayout,
+      };
+    });
+
+    return {
+      dashboardId: dashboard.id,
+      widgets: widgetsWithLayout,
+    };
+  }
+
+  async saveLayout(
+    userId: string,
+    dashboardId: string,
+    layoutItems: Array<{
+      dashboardWidgetId: string;
+      x: number;
+      y: number;
+      w: number;
+      h: number;
+    }>
+  ) {
+    for (const item of layoutItems) {
+      await prisma.widgetLayout.upsert({
+        where: {
+          userId_dashboardWidgetId: {
+            userId,
+            dashboardWidgetId: item.dashboardWidgetId,
+          },
+        },
+        update: {
+          x: item.x,
+          y: item.y,
+          w: item.w,
+          h: item.h,
+        },
+        create: {
+          userId,
+          dashboardId,
+          dashboardWidgetId: item.dashboardWidgetId,
+          x: item.x,
+          y: item.y,
+          w: item.w,
+          h: item.h,
+        },
+      });
+    }
+  }
+
+  async getAvailableWidgets() {
+    return prisma.widget.findMany();
+  }
+
+  async addWidgetToDashboard(dashboardId: string, widgetId: string, title?: string, config?: any) {
+    return prisma.dashboardWidget.create({
+      data: {
+        dashboardId,
+        widgetId,
+        title,
+        config,
+      },
+    });
+  }
+
+  async removeWidgetFromDashboard(dashboardWidgetId: string) {
+    return prisma.dashboardWidget.delete({
+      where: { id: dashboardWidgetId },
+    });
+  }
 }
 
 export const dashboardService = new DashboardService();
