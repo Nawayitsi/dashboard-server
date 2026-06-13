@@ -3,7 +3,7 @@ version: '3.8'
 services:
   # ─── Frontend ─────────────────────────────────────────────
   frontend:
-    image: ${FRONTEND_IMAGE:-ghcr.io/ekazakhiistiyawan/homelabos-frontend:latest}
+    image: ${FRONTEND_IMAGE:-ghcr.io/nawayitsi/homelabos-frontend:latest}
     build:
       context: ./frontend
       dockerfile: Dockerfile
@@ -19,7 +19,7 @@ services:
 
   # ─── Backend ──────────────────────────────────────────────
   backend:
-    image: ${BACKEND_IMAGE:-ghcr.io/ekazakhiistiyawan/homelabos-backend:latest}
+    image: ${BACKEND_IMAGE:-ghcr.io/nawayitsi/homelabos-backend:latest}
     build:
       context: ./backend
       dockerfile: Dockerfile
