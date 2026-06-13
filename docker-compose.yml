@@ -43,9 +43,9 @@ services:
       retries: 3
       start_period: 40s
 
-  # ─── MySQL ────────────────────────────────────────────────
+  # ─── MariaDB ──────────────────────────────────────────────
   mysql:
-    image: mysql:8.0
+    image: mariadb:10.11
     container_name: homelabos-mysql
     ports:
       - '3306:3306'
@@ -60,12 +60,12 @@ services:
       - homelabos-network
     restart: unless-stopped
     healthcheck:
-      test: ['CMD', 'mysqladmin', 'ping', '-h', 'localhost']
+      test: ['CMD', 'mariadb-admin', 'ping', '-h', 'localhost']
       interval: 10s
       timeout: 5s
       retries: 5
       start_period: 30s
-    command: --default-authentication-plugin=mysql_native_password --character-set-server=utf8mb4 --collation-server=utf8mb4_unicode_ci
+    command: --character-set-server=utf8mb4 --collation-server=utf8mb4_unicode_ci
 
   # ─── Redis ────────────────────────────────────────────────
   redis:
