@@ -50,7 +50,14 @@ export function Applications() {
   const [selectedType, setSelectedType] = useState('CUSTOM');
 
   // Step 2 Custom Fields
-  const [customApp, setCustomApp] = useState({
+  const [customApp, setCustomApp] = useState<{
+    name: string;
+    url: string;
+    description: string;
+    category: string;
+    openIn: 'SAME_TAB' | 'NEW_TAB' | 'EMBEDDED';
+    color: string;
+  }>({
     name: '',
     url: '',
     description: '',
